@@ -1,0 +1,252 @@
+// Schéma Prisma dérivé du MCD Merise (docs/WhatsApp Image 2026-07-07 at 20.01.11.jpeg)
+//
+// Choix de modélisation :
+//  - Héritage (Personne->Client/Employe, Employe->Livreur, Facture->BonCommande/BonLivraison)
+//    transformé en "table-per-type" : la sous-classe partage la clé primaire de la super-classe
+//    via une relation 1-1 identifiante (onDelete: Cascade).
+//  - Les associations porteuses d'une quantité (Contenir, Stocker, Presenter, Stock) deviennent
+//    des tables de jonction avec clé primaire composite.
+//  - Types Merise : Entier -> Int, Caractère long -> String, Booléen -> Boolean, Date -> DateTime.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------------
+// Personnes (héritage Personne -> Client / Employe -> Livreur)
+// ------------------------------------------------------------------
+
+model Personne {
+  idPersonne Int    @id @default(autoincrement())
+  nom        String
+  prenom     String
+  email      String @unique
+
+  client  Client?
+  employe Employe?
+}
+
+model Client {
+  idPersonne Int      @id
+  personne   Personne @relation(fields: [idPersonne], references: [idPersonne], onDelete: Cascade)
+  type       String? // (Ancien, Nouveau, ...)
+  qte        Int?
+
+  commandes Commande[] // Passer
+}
+
+model Employe {
+  idPersonne Int      @id
+  personne   Personne @relation(fields: [idPersonne], references: [idPersonne], onDelete: Cascade)
+  post       String?
+  presence   Int?
+
+  role        String? // Avoir
+  roleEmploye RoleEmploye? @relation(fields: [role], references: [role])
+  salaires    Salaire[] // Associer
+  livreur     Livreur?
+}
+
+model Livreur {
+  idPersonne Int     @id
+  employe    Employe @relation(fields: [idPersonne], references: [idPersonne], onDelete: Cascade)
+  idLivreur  Int     @unique @default(autoincrement())
+
+  livraisons Livraison[] // Relation 17/18/19
+}
+
+model RoleEmploye {
+  role  String @id
+  tache String
+
+  employes Employe[] // Avoir
+}
+
+model Salaire {
+  id             Int @id @default(autoincrement())
+  valeurInitiale Int
+  modification   Int
+  nouvelleValeur Int
+
+  idEmploye Int // Associer
+  employe   Employe @relation(fields: [idEmploye], references: [idPersonne], onDelete: Cascade)
+}
+
+// ------------------------------------------------------------------
+// Commandes & factures (héritage Facture -> BonCommande / BonLivraison)
+// ------------------------------------------------------------------
+
+model Commande {
+  idCommande Int      @id @default(autoincrement())
+  date       DateTime
+  validation Boolean
+
+  idClient Int // Passer
+  client   Client @relation(fields: [idClient], references: [idPersonne])
+
+  idFacture Int?     @unique // Avoir (1-1)
+  facture   Facture? @relation(fields: [idFacture], references: [idFacture])
+
+  produits ContenirCommande[] // Contenir
+}
+
+model Facture {
+  idFacture       Int      @id @default(autoincrement())
+  dateInspiration DateTime
+  valeur          Int
+
+  commande     Commande? // Avoir
+  bonCommande  BonCommande?
+  bonLivraison BonLivraison?
+}
+
+model BonCommande {
+  idFacture     Int     @id
+  facture       Facture @relation(fields: [idFacture], references: [idFacture], onDelete: Cascade)
+  idBonCommande Int     @unique @default(autoincrement())
+}
+
+model BonLivraison {
+  idFacture      Int     @id
+  facture        Facture @relation(fields: [idFacture], references: [idFacture], onDelete: Cascade)
+  idBonLivraison Int     @unique @default(autoincrement())
+}
+
+// ------------------------------------------------------------------
+// Livraisons
+// ------------------------------------------------------------------
+
+model Livraison {
+  idLivraison   Int      @id @default(autoincrement())
+  dateLivraison DateTime
+
+  idLivreur Int // Relation 17/18/19
+  livreur   Livreur @relation(fields: [idLivreur], references: [idLivreur])
+
+  produits ContenirLivraison[] // Contenir
+}
+
+// ------------------------------------------------------------------
+// Produits, catalogue, types
+// ------------------------------------------------------------------
+
+model Produit {
+  idProduit Int    @id @default(autoincrement())
+  nom       String
+
+  type        String // Posseder
+  typeProduit TypeProduit @relation(fields: [type], references: [type])
+
+  commandes  ContenirCommande[] // Contenir
+  livraisons ContenirLivraison[] // Contenir
+  catalogues Presenter[] // Presenter
+  stocks     Stock[] // Stock
+}
+
+model TypeProduit {
+  type String @id
+
+  produits Produit[] // Posseder
+}
+
+model Catalogue {
+  idCatalogue Int    @id @default(autoincrement())
+  description String
+  prix        Int
+
+  produits Presenter[] // Presenter
+}
+
+// ------------------------------------------------------------------
+// Matière première & stockage physique
+// ------------------------------------------------------------------
+
+model MatierePremiere {
+  type String @id
+  qte  Int
+
+  silos Stocker[] // Stocker
+}
+
+model Silon {
+  numero Int @id
+  qteMax Int
+
+  matieres Stocker[] // Stocker
+}
+
+model ZoneStock {
+  numero   Int @id
+  capacite Int
+
+  stocks Stock[] // Stock
+}
+
+// ------------------------------------------------------------------
+// Tables de jonction (associations porteuses d'une quantité)
+// ------------------------------------------------------------------
+
+// Contenir : Commande <-> Produit
+model ContenirCommande {
+  idCommande Int
+  idProduit  Int
+  qte        Int
+
+  commande Commande @relation(fields: [idCommande], references: [idCommande], onDelete: Cascade)
+  produit  Produit  @relation(fields: [idProduit], references: [idProduit], onDelete: Cascade)
+
+  @@id([idCommande, idProduit])
+}
+
+// Contenir : Livraison <-> Produit
+model ContenirLivraison {
+  idLivraison Int
+  idProduit   Int
+  qte         Int
+
+  livraison Livraison @relation(fields: [idLivraison], references: [idLivraison], onDelete: Cascade)
+  produit   Produit   @relation(fields: [idProduit], references: [idProduit], onDelete: Cascade)
+
+  @@id([idLivraison, idProduit])
+}
+
+// Presenter : Catalogue <-> Produit
+model Presenter {
+  idCatalogue Int
+  idProduit   Int
+  qte         Int
+
+  catalogue Catalogue @relation(fields: [idCatalogue], references: [idCatalogue], onDelete: Cascade)
+  produit   Produit   @relation(fields: [idProduit], references: [idProduit], onDelete: Cascade)
+
+  @@id([idCatalogue, idProduit])
+}
+
+// Stock : Produit <-> ZoneStock
+model Stock {
+  idProduit  Int
+  numeroZone Int
+  qte        Int
+
+  produit   Produit   @relation(fields: [idProduit], references: [idProduit], onDelete: Cascade)
+  zoneStock ZoneStock @relation(fields: [numeroZone], references: [numero], onDelete: Cascade)
+
+  @@id([idProduit, numeroZone])
+}
+
+// Stocker : MatierePremiere <-> Silon
+model Stocker {
+  typeMatiere String
+  numeroSilon Int
+  qte         Int
+
+  matierePremiere MatierePremiere @relation(fields: [typeMatiere], references: [type], onDelete: Cascade)
+  silon           Silon           @relation(fields: [numeroSilon], references: [numero], onDelete: Cascade)
+
+  @@id([typeMatiere, numeroSilon])
+}
