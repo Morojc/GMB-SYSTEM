@@ -1,13 +1,16 @@
+import Link from "next/link";
+
 export default function Navbar() {
   return (
-    <header className="bg-white shadow px-6 py-4 flex justify-between">
-      <h2 className="text-xl font-bold">
-        Tableau de bord
-      </h2>
+    <header className="flex justify-between items-center bg-white shadow p-4">
+      <h2 className="text-xl font-bold">Dashboard</h2>
 
-      <button className="bg-red-500 text-white px-4 py-2 rounded">
+      <Link
+        href="/login"
+        className="bg-red-500 text-white px-4 py-2 rounded"
+      >
         Déconnexion
-      </button>
+      </Link>
     </header>
   );
 }
