@@ -4,7 +4,6 @@ export default async function EmployePage() {
   const employes = await prisma.employe.findMany({
     include: {
       personne: true,
-      roleEmploye: true,
     },
   });
 
@@ -14,33 +13,47 @@ export default async function EmployePage() {
         Gestion des employés
       </h1>
 
-      <div className="bg-white rounded-lg shadow p-6">
-
-        <table className="w-full">
-          <thead>
-            <tr className="border-b">
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Email</th>
-              <th>Poste</th>
-              <th>Rôle</th>
+      <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
+        <table className="min-w-full border border-gray-300">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="border px-4 py-2">ID</th>
+              <th className="border px-4 py-2">Nom</th>
+              <th className="border px-4 py-2">Prénom</th>
+              <th className="border px-4 py-2">Email</th>
+              <th className="border px-4 py-2">Poste</th>
+              <th className="border px-4 py-2">Présence</th>
             </tr>
           </thead>
 
           <tbody>
-            {employes.map((emp) => (
-              <tr key={emp.idPersonne} className="border-b">
-                <td>{emp.personne.nom}</td>
-                <td>{emp.personne.prenom}</td>
-                <td>{emp.personne.email}</td>
-                <td>{emp.post}</td>
-                <td>{emp.role}</td>
+            {employes.length > 0 ? (
+              employes.map((emp) => (
+                <tr key={emp.idPersonne}>
+                  <td className="border px-4 py-2">{emp.idPersonne}</td>
+                  <td className="border px-4 py-2">{emp.personne.nom}</td>
+                  <td className="border px-4 py-2">{emp.personne.prenom}</td>
+                  <td className="border px-4 py-2">{emp.personne.email}</td>
+                  <td className="border px-4 py-2">
+                    {emp.post ?? "-"}
+                  </td>
+                  <td className="border px-4 py-2">
+                    {emp.presence ?? "-"}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="text-center py-4"
+                >
+                  Aucun employé trouvé.
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
-
         </table>
-
       </div>
     </div>
   );
