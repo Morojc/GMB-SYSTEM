@@ -1,11 +1,7 @@
  import { prisma } from "@/lib/prisma";
 
 export default async function ProduitPage() {
-  const produits = await prisma.produit.findMany({
-    include: {
-      typeProduit: true,
-    },
-  });
+  const produits = await prisma.produit.findMany();
 
   return (
     <div>
@@ -14,31 +10,23 @@ export default async function ProduitPage() {
       </h1>
 
       <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
-        <table className="min-w-full border border-gray-300">
-          <thead className="bg-gray-200">
+        <table className="min-w-full border">
+          <thead>
             <tr>
-              <th className="border px-4 py-2">ID</th>
-              <th className="border px-4 py-2">Nom</th>
-              <th className="border px-4 py-2">Type</th>
+              <th className="border p-2">ID</th>
+              <th className="border p-2">Nom</th>
+              <th className="border p-2">Type</th>
             </tr>
           </thead>
 
           <tbody>
-            {produits.length > 0 ? (
-              produits.map((produit) => (
-                <tr key={produit.idProduit}>
-                  <td className="border px-4 py-2">{produit.idProduit}</td>
-                  <td className="border px-4 py-2">{produit.nom}</td>
-                  <td className="border px-4 py-2">{produit.type}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3} className="text-center py-4">
-                  Aucun produit trouvé.
-                </td>
+            {produits.map((produit) => (
+              <tr key={produit.idProduit}>
+                <td className="border p-2">{produit.idProduit}</td>
+                <td className="border p-2">{produit.nom}</td>
+                <td className="border p-2">{produit.type}</td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>
