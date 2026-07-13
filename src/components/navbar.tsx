@@ -19,7 +19,7 @@ export default function Navbar() {
           href="/"
           className="text-3xl font-bold text-green-700"
         >
-          GBM
+          GMB
         </Link>
 
         <div className="hidden md:flex items-center gap-8 font-medium">

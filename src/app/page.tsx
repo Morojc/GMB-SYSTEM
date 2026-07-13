@@ -11,7 +11,7 @@ export default function HomePage() {
       <nav className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
           <h1 className="text-3xl font-bold text-green-700">
-            GBM
+            GMB
           </h1>
 
           <div className="hidden md:flex gap-8 text-gray-700 font-medium">
