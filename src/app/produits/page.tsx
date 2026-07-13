@@ -1,105 +1,99 @@
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
-const produits = [
-  {
-    id: 1,
-    nom: "Farine",
-    description:
-      "Produit alimentaire de haute qualité destiné aux professionnels et particuliers.",
-    prix: "25 DH",
-    image:
-      "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
-  },
-  {
-    id: 2,
-    nom: "Semoule",
-    description:
-      "Produit alimentaire de haute qualité destiné aux professionnels et particuliers.",
-    prix: "18 DH",
-    image:
-      "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
-  },
-  {
-    id: 3,
-    nom: "Blé",
-    description:
-      "Produit alimentaire de haute qualité destiné aux professionnels et particuliers.",
-    prix: "30 DH",
-    image:
-      "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
-  },
-  {
-    id: 4,
-    nom: "Maïs",
-    description:
-      "Produit alimentaire riche en qualité pour différents usages.",
-    prix: "22 DH",
-    image:
-      "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
-  },
-];
+import Navbar from "@/components/Navbar";
 
-export default function ProduitsPage() {
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gray-100">
+    <>
+      <Navbar />
 
-      {/* Header */}
-      <section className="bg-green-700 text-white py-16">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-5xl font-bold">
+      <main>
+        {/* contenu de la page */}
+      </main>
+    </>
+  );
+}
+
+export default async function ProduitsPage() {
+  const produits = await prisma.produit.findMany({
+    include: {
+      type_produit: true,
+    },
+  });
+
+  return (
+    <main className="min-h-screen bg-gray-100 py-10">
+      <div className="max-w-7xl mx-auto px-6">
+
+        <div className="flex justify-between items-center mb-10">
+
+          <h1 className="text-4xl font-bold">
             Nos Produits
           </h1>
 
-          <p className="mt-4 text-lg text-green-100">
-            Découvrez toute notre gamme de produits alimentaires.
-          </p>
+          <Link
+            href="/panier"
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
+          >
+            🛒 Mon panier
+          </Link>
+
         </div>
-      </section>
 
-      {/* Liste Produits */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
+        {produits.length === 0 ? (
+          <div className="bg-white rounded-xl shadow p-10 text-center">
+            <h2 className="text-2xl font-semibold">
+              Aucun produit disponible.
+            </h2>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {produits.map((produit) => (
 
-          {produits.map((produit) => (
-            <div
-              key={produit.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300"
-            >
-              <img
-                src={produit.image}
-                alt={produit.nom}
-                className="w-full h-56 object-cover"
-              />
+              <div
+                key={produit.id_produit}
+                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition"
+              >
 
-              <div className="p-6">
+                <img
+                  src="https://images.unsplash.com/photo-1509440159596-0249088772ff"
+                  alt={produit.nom ?? "Produit"}
+                  className="w-full h-56 object-cover"
+                />
 
-                <h2 className="text-2xl font-bold">
-                  {produit.nom}
-                </h2>
+                <div className="p-6">
 
-                <p className="text-green-600 text-xl font-semibold mt-2">
-                  {produit.prix}
-                </p>
+                  <h2 className="text-2xl font-bold">
+                    {produit.nom}
+                  </h2>
 
-                <p className="text-gray-600 mt-4">
-                  {produit.description}
-                </p>
+                  <p className="text-gray-500 mt-2">
+                    Type : {produit.type_produit?.nom_type ?? "Inconnu"}
+                  </p>
 
-                <Link
-                  href={`/produits/${produit.id}`}
-                  className="mt-6 inline-block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl transition"
-                >
-                  Voir plus
-                </Link>
+                  <div className="mt-6 flex gap-3">
+
+                    <Link
+                      href={`/produits/${produit.id_produit}`}
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg"
+                    >
+                      Voir détails
+                    </Link>
+
+                  </div>
+
+                </div>
 
               </div>
-            </div>
-          ))}
 
-        </div>
+            ))}
 
-      </section>
+          </div>
+        )}
+
+      </div>
     </main>
   );
 }

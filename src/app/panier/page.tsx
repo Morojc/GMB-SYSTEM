@@ -1,21 +1,11 @@
-import Link from "next/link";
+"use client";
 
-const panier = [
-  {
-    id: 1,
-    nom: "Farine",
-    prix: 25,
-    quantite: 2,
-  },
-  {
-    id: 2,
-    nom: "Semoule",
-    prix: 18,
-    quantite: 1,
-  },
-];
+import Link from "next/link";
+import { useCart } from "@/context/CartContext";
 
 export default function PanierPage() {
+  const { panier, removeFromCart } = useCart();
+
   const total = panier.reduce(
     (sum, produit) => sum + produit.prix * produit.quantite,
     0
@@ -31,9 +21,14 @@ export default function PanierPage() {
 
         {panier.length === 0 ? (
           <div className="bg-white rounded-xl shadow p-10 text-center">
+
             <h2 className="text-2xl font-semibold">
               Votre panier est vide
             </h2>
+
+            <p className="text-gray-500 mt-3">
+              Ajoutez quelques produits avant de passer une commande.
+            </p>
 
             <Link
               href="/produits"
@@ -41,6 +36,7 @@ export default function PanierPage() {
             >
               Voir les produits
             </Link>
+
           </div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-8">
@@ -52,17 +48,28 @@ export default function PanierPage() {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-3">Produit</th>
+                    <th className="text-center py-3">Prix</th>
                     <th className="text-center py-3">Quantité</th>
-                    <th className="text-right py-3">Prix</th>
+                    <th className="text-right py-3">Total</th>
+                    <th className="text-center py-3">Action</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {panier.map((produit) => (
-                    <tr key={produit.id} className="border-b">
 
-                      <td className="py-5">
+                  {panier.map((produit) => (
+
+                    <tr
+                      key={produit.id}
+                      className="border-b"
+                    >
+
+                      <td className="py-5 font-medium">
                         {produit.nom}
+                      </td>
+
+                      <td className="text-center">
+                        {produit.prix} DH
                       </td>
 
                       <td className="text-center">
@@ -73,8 +80,23 @@ export default function PanierPage() {
                         {produit.prix * produit.quantite} DH
                       </td>
 
+                      <td className="text-center">
+
+                        <button
+                          onClick={() =>
+                            removeFromCart(produit.id)
+                          }
+                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+                        >
+                          Supprimer
+                        </button>
+
+                      </td>
+
                     </tr>
+
                   ))}
+
                 </tbody>
 
               </table>
@@ -87,11 +109,19 @@ export default function PanierPage() {
                 Résumé
               </h2>
 
-              <div className="flex justify-between mb-4">
-                <span>Total :</span>
+              <div className="flex justify-between mb-3">
+                <span>Nombre de produits</span>
 
-                <span className="font-bold text-green-600 text-xl">
-                  {total} DH
+                <span>
+                  {panier.length}
+                </span>
+              </div>
+
+              <div className="flex justify-between mb-3">
+                <span>Total</span>
+
+                <span className="text-2xl font-bold text-green-600">
+                  {total.toFixed(2)} DH
                 </span>
               </div>
 
