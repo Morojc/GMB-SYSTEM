@@ -1,5 +1,11 @@
+import Navbar from "@/components/navbar";
+
+
+
 export default function ContactPage() {
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-gray-100">
 
       <section className="bg-green-700 text-white py-16">
@@ -115,5 +121,6 @@ export default function ContactPage() {
       </section>
 
     </main>
+    </>
   );
 }

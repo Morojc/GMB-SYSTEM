@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import Navbar from "@/components/navbar";
+
+
+
 
 export default function CommandePage() {
   const router = useRouter();
@@ -54,6 +58,8 @@ export default function CommandePage() {
   }
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-gray-100 py-10">
 
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
@@ -158,5 +164,6 @@ export default function CommandePage() {
       </div>
 
     </main>
+    </>
   );
 }

@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import AddToCartButton from "@/components/AddToCartButton";
+import Navbar from "@/components/navbar";
+
 
 interface Props {
   params: Promise<{
@@ -28,6 +30,8 @@ export default async function ProduitDetailsPage({
   }
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-gray-100 py-10">
 
       <div className="max-w-6xl mx-auto px-6">
@@ -101,5 +105,6 @@ export default async function ProduitDetailsPage({
       </div>
 
     </main>
+    </>
   );
 }

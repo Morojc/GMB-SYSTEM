@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import Navbar from "@/components/navbar";
+
+
 
 export default function PanierPage() {
   const { panier, removeFromCart } = useCart();
@@ -12,6 +15,8 @@ export default function PanierPage() {
   );
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-6xl mx-auto px-6">
 
@@ -146,5 +151,6 @@ export default function PanierPage() {
 
       </div>
     </main>
+    </>
   );
 }

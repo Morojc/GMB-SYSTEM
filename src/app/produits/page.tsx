@@ -1,19 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-
-import Navbar from "@/components/Navbar";
-
-export default function HomePage() {
-  return (
-    <>
-      <Navbar />
-
-      <main>
-        {/* contenu de la page */}
-      </main>
-    </>
-  );
-}
+import Navbar from "@/components/navbar";
 
 export default async function ProduitsPage() {
   const produits = await prisma.produit.findMany({
@@ -23,6 +10,8 @@ export default async function ProduitsPage() {
   });
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-7xl mx-auto px-6">
 
@@ -95,5 +84,6 @@ export default async function ProduitsPage() {
 
       </div>
     </main>
+    </>
   );
 }
