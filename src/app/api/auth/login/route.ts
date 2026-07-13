@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await bcrypt.compare(password,password);
 
     if (!valid) {
       return NextResponse.json(
