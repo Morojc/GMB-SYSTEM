@@ -45,7 +45,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
         <div>
           <h2 className="text-5xl font-bold text-gray-800 leading-tight">
-            Bienvenue chez <span className="text-green-600">GBM</span>
+            Bienvenue chez <span className="text-green-600">GMB</span>
           </h2>
 
           <p className="text-gray-600 mt-6 text-lg leading-8">
