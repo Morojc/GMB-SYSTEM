@@ -15,14 +15,16 @@ export default function Navbar() {
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
 
+        {/* Logo */}
         <Link
           href="/"
           className="text-3xl font-bold text-green-700"
         >
-          GMB
+          GBM
         </Link>
 
-        <div className="hidden md:flex items-center gap-8 font-medium">
+        {/* Menu */}
+        <div className="hidden md:flex items-center gap-8 font-medium text-gray-700">
 
           <Link
             href="/"
@@ -54,6 +56,7 @@ export default function Navbar() {
 
         </div>
 
+        {/* Actions */}
         <div className="flex items-center gap-4">
 
           <Link
@@ -63,7 +66,7 @@ export default function Navbar() {
             🛒 Panier
 
             {nombreProduits > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
                 {nombreProduits}
               </span>
             )}
@@ -73,7 +76,7 @@ export default function Navbar() {
             href="/login"
             className="border border-green-600 text-green-600 hover:bg-green-600 hover:text-white px-5 py-2 rounded-lg transition"
           >
-            Connexion
+            Espace Employé
           </Link>
 
         </div>
