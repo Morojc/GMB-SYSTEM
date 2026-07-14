@@ -32,6 +32,8 @@ export default function HomePage() {
             </Link>
           </div>
 
+
+        <div className="flex justify-center gap-4">
           <Link
             href="/client/inscription"
             className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
@@ -44,6 +46,7 @@ export default function HomePage() {
           >
             Connexion
           </Link>
+        </div>
         </div>
       </nav>
 
