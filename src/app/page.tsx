@@ -33,7 +33,15 @@ export default function HomePage() {
           </div>
 
           <Link
-            href="/login"
+            href="/client/inscription"
+            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
+          >
+            Inscription
+          </Link>
+
+          
+          <Link
+            href="/client/login"
             className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
           >
             Connexion
