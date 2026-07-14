@@ -131,7 +131,7 @@ export default function PanierPage() {
               </div>
 
               <Link
-                href="/commande"
+                href="/client/login"
                 className="block text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg mt-6"
               >
                 Passer la commande
