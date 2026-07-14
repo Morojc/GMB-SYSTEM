@@ -1,11 +1,9 @@
 import Link from "next/link";
-import Navbar from "@/components/navbar";
 
 
 export default function HomePage() {
   return (
-    <>
-      <Navbar />
+   
     <main className="bg-gray-50 min-h-screen">
       {/* Navbar */}
       <nav className="bg-white shadow-md">
@@ -201,6 +199,5 @@ export default function HomePage() {
       </footer>
     </main>
      
-    </>
   );
 }
