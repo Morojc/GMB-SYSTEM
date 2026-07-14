@@ -69,12 +69,7 @@ export default function Navbar() {
             )}
           </Link>
 
-          <Link
-            href="/login"
-            className="border border-green-600 text-green-600 hover:bg-green-600 hover:text-white px-5 py-2 rounded-lg transition"
-          >
-            Connexion
-          </Link>
+          
 
         </div>
 
