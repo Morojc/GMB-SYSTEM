@@ -79,56 +79,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Produits */}
-      <section className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-12">
-            Nos Produits
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {["Farine", "Semoule", "Blé"].map((produit, index) => (
-              <div
-                key={produit}
-                className="bg-gray-50 rounded-2xl shadow hover:shadow-xl transition overflow-hidden"
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1509440159596-0249088772ff"
-                  alt={produit}
-                  className="h-56 w-full object-cover"
-                />
-
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold mb-3">
-                    {produit}
-                  </h3>
-
-                  <p className="text-gray-600">
-                    Produit alimentaire de haute qualité destiné aux
-                    professionnels et particuliers.
-                  </p>
-
-                  <Link
-                    href={`/produits/${index + 1}`}
-                    className="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
-                  >
-                    Voir plus
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link
-              href="/produits"
-              className="inline-block bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-xl transition"
-            >
-              Voir tous les produits
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Pourquoi nous */}
       <section className="py-20">

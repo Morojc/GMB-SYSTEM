@@ -44,7 +44,7 @@ export default function ContactPage() {
                 </h3>
 
                 <p className="text-gray-600">
-                  Zone Industrielle, Casablanca, Maroc
+                  Zone Industrielle, Marrakech, Maroc
                 </p>
               </div>
 
@@ -54,7 +54,7 @@ export default function ContactPage() {
                 </h3>
 
                 <p className="text-gray-600">
-                  +212 5 22 00 00 00
+                  +212 *********
                 </p>
               </div>
 
