@@ -1,15 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
+  const router = useRouter();
+
   const { panier } = useCart();
 
   const nombreProduits = panier.reduce(
     (total, item) => total + item.quantite,
     0
   );
+
+  async function handlePanier() {
+    try {
+      const response = await fetch("/api/client/me");
+
+      if (response.ok) {
+        router.push("/panier");
+      } else {
+        router.push("/client/inscription");
+      }
+    } catch (error) {
+      router.push("/client/inscription");
+    }
+  }
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -59,8 +76,8 @@ export default function Navbar() {
         {/* Actions */}
         <div className="flex items-center gap-4">
 
-          <Link
-            href="/panier"
+          <button
+            onClick={handlePanier}
             className="relative bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
           >
             🛒 Panier
@@ -70,14 +87,7 @@ export default function Navbar() {
                 {nombreProduits}
               </span>
             )}
-          </Link>
-
-          <Link
-            href="/login"
-            className="border border-green-600 text-green-600 hover:bg-green-600 hover:text-white px-5 py-2 rounded-lg transition"
-          >
-            Espace Employé
-          </Link>
+          </button>
 
         </div>
 
