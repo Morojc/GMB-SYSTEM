@@ -4,11 +4,16 @@ A management system for a flour-mill / food-distribution business, built with
 **Next.js 16** (App Router), **Prisma 6 + PostgreSQL**, **Tailwind CSS v4**,
 JWT authentication and a config-driven admin dashboard.
 
-It provides:
+It models the full mill cycle — **buy wheat → store in silos → mill (produce) →
+finished product → sell & invoice** — and provides:
 
 - A **role-based authentication** system (ADMIN / EMPLOYE / CLIENT) with a single JWT cookie.
-- An **admin dashboard** with full **CRUD** over every entity in the database, generated
-  from small per-entity config files (add a screen by adding one config).
+- An **admin-only dashboard** with full **CRUD** over every entity, generated from
+  small per-entity config files (add a screen by adding one config), plus two
+  **guided workflows**: *réception d'achat* (wheat in → stock up + supplier invoice)
+  and *fabrication* (consume raw material → produce finished goods, with yield).
+- **Two-sided billing**: purchase invoices (fournisseurs) and sales invoices (clients),
+  with a finance summary (ventes − achats = marge).
 - A **public storefront** (product catalog, cart, checkout) for clients.
 - An **industrial / wheat-toned** design system.
 
@@ -73,10 +78,14 @@ The seed creates these logins (change them before any real deployment):
 | Role     | Email               | Password      | Lands on     |
 | -------- | ------------------- | ------------- | ------------ |
 | ADMIN    | `admin@gmb.local`   | `Admin123!`   | `/dashboard` |
-| EMPLOYE  | `meunier@gmb.local` | `Meunier123!` | `/dashboard` |
+| EMPLOYE  | `meunier@gmb.local` | `Meunier123!` | `/produits` (dashboard is admin-only) |
 | CLIENT   | `sara.alaoui@example.com` | `Client123!` | `/produits`  |
 
 Log in at **`/login`**. Clients can self-register at **`/client/inscription`**.
+The **dashboard is admin-only** — only ADMIN reaches `/dashboard`.
+
+> When the schema changes (this build added the procurement/production tables),
+> re-run `npx prisma db push` (or `migrate`) and `npx prisma generate` before `npm run seed`.
 
 ## Scripts
 

@@ -3,6 +3,11 @@
 This guide explains how the GMB system is put together and how to extend it.
 For setup and run instructions see the [README](../README.md).
 
+> **This is a flour-mill (Grand Moulin) operations system.** The dashboard is
+> **admin-only** and models the full cycle: **buy wheat → store → mill (produce)
+> → finished product → sell & invoice**. See §9 for the cycle and its two guided
+> workflows.
+
 ---
 
 ## 1. Domain glossary (French → meaning)
@@ -32,6 +37,16 @@ and columns are **snake_case**.
 | `zone_stock`       | A storage zone / warehouse area.                    |
 | `silon`            | A silo (stores raw material).                        |
 | `matiere_premiere` | Raw material (e.g. wheat) stored in a silo.         |
+| `fournisseur`      | Supplier the mill buys wheat / raw material from.    |
+| `achat`            | A purchase order to a supplier (statut: Commandé/Reçu/Annulé). |
+| `ligne_achat`      | A purchase line (raw material × quantity × price).   |
+| `facture_achat`    | Supplier invoice (money paid out).                   |
+| `fabrication`      | A production run (milling wheat into products).      |
+| `fabrication_intrant` | Raw material **consumed** by a production run.    |
+| `fabrication_produit` | Finished product **produced** by a run.           |
+
+> `facture` (tied to `commande`) is the **sales** invoice ("facture de vente");
+> `facture_achat` (tied to `achat`) is the **purchase** invoice.
 
 ## 2. Tech stack
 
@@ -65,7 +80,7 @@ POST /api/auth/login
   → Set-Cookie: token=<jwt>  (httpOnly, sameSite=lax)
 
 Every request → src/proxy.ts (runs before rendering, nodejs runtime)
-  → /dashboard/*                     require role ∈ {ADMIN, EMPLOYE}, else → /produits or /login
+  → /dashboard/*                     ADMIN only, else → /produits (or /login if anonymous)
   → /panier /commande /confirmation  require any authenticated user, else → /login
   → jwtVerify(token, JWT_SECRET)      [jose]
 
@@ -81,14 +96,13 @@ redirect by role. Client self-registration is `POST /api/client/inscription`.
 
 | Area                                   | ADMIN | EMPLOYE | CLIENT |
 | -------------------------------------- | :---: | :-----: | :----: |
-| Dashboard (most resources)             |  ✅   |   ✅    |   ❌   |
-| HR resources (`employes`, `salaires`, `roles`) | ✅ | ❌ | ❌ |
-| `personnes` (identity table)           |  ✅   |   ❌    |   ❌   |
+| **Entire `/dashboard`** (all resources + workflows) | ✅ | ❌ | ❌ |
 | Storefront, cart, place order          |  ✅   |   ✅    |   ✅   |
 
-`adminOnly` resources are guarded in **three** places: hidden in the sidebar,
-redirected in the page, and re-checked inside every write Server Action
-(`requireRole`) — because Server Actions are reachable by direct POST.
+The dashboard is **admin-only** (enforced in `proxy.ts` and the dashboard layout).
+Write Server Actions still call `requireRole` — because Server Actions are reachable
+by direct POST, not only through the UI. (Per-resource `adminOnly` flags remain in
+the configs but are moot while the whole dashboard is admin-only.)
 
 ## 4. The resource framework
 
@@ -213,3 +227,47 @@ utilities (`bg-grain`, `text-roast`, `bg-wheat`, `border-line`, …):
   error in the UI rather than cascading.
 - Out of scope (by design): file uploads, PDF invoice/voucher generation, email,
   password reset, server-side pagination, i18n, storefront visual redesign.
+
+## 9. The operations cycle & guided workflows
+
+The dashboard nav follows the mill cycle, grouped as
+**Approvisionnement → Production → Stock → Ventes → RH → Système**, plus an
+**Opérations** section at the top linking the two guided workflows.
+
+```
+Approvisionnement   fournisseur → achat (+ligne_achat) → [Réception] → facture_achat
+        │                                                     │ increments
+        ▼                                                     ▼
+   matiere_premiere (wheat in silos) ───────────────► [Fabrication] ──┐
+                                                        consumes       │ produces
+                                                                       ▼
+                                                        produit (finished, in stock)
+                                                                       │
+                                                                       ▼
+                                              commande → facture (vente) → livraison
+```
+
+Most tables use the generic CRUD framework (§4). The **two steps with real
+business logic** are dedicated pages backed by transactional Server Actions in
+`src/lib/actions/cycle.ts`:
+
+### A. Réception d'un achat — `/dashboard/reception`
+Lists purchases not yet received. "Réceptionner" runs `receptionAchat(idAchat)`:
+in one `prisma.$transaction` it **increments `matiere_premiere.quantite`** for each
+line, sets the achat to `Reçu`, and creates a **`facture_achat`** for the line
+total. Idempotent — refuses an already-received purchase.
+
+### B. Lancer une fabrication — `/dashboard/production`
+A multi-row form (raw-material inputs + finished-product outputs). `createFabrication(input)`
+validates that enough raw material is in stock, then in one transaction records the
+run, **decrements `matiere_premiere`** for each input and **increments
+`produit.quantite_stock`** for each output, and reports the **rendement** (yield %
+= output ÷ input). Both actions are ADMIN-guarded.
+
+### Finance
+The overview shows total **ventes** (Σ `facture.montant`) vs total **achats**
+(Σ `facture_achat.montant`) and the resulting **marge brute**.
+
+> These two pages live at static segments (`/dashboard/reception`,
+> `/dashboard/production`) that intentionally do **not** collide with the generic
+> `/dashboard/[resource]` routes.
