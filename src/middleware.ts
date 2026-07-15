@@ -1,33 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 
-export function middleware(request: NextRequest) {
+// Routes that require staff (ADMIN or EMPLOYE).
+const staffOnly = ["/dashboard"];
+// Routes that require any authenticated user.
+const authOnly = ["/panier", "/commande", "/confirmation", "/mes-commande"];
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
 
-  const protectedRoutes = [
-    "/dashboard",
-    "/panier",
-    "/commande",
-    "/confirmation",
-    "/mes-commandes",
-  ];
+  const isStaff = staffOnly.some((r) => pathname.startsWith(r));
+  const isAuth = authOnly.some((r) => pathname.startsWith(r));
 
-  const isProtected = protectedRoutes.some((route) =>
-    request.nextUrl.pathname.startsWith(route)
-  );
-
-  if (!isProtected) {
-    return NextResponse.next();
-  }
+  if (!isStaff && !isAuth) return NextResponse.next();
 
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   try {
-    jwt.verify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret, {
+      algorithms: ["HS256"],
+    });
+    const role = payload.role as string | undefined;
+
+    if (isStaff && role !== "ADMIN" && role !== "EMPLOYE") {
+      return NextResponse.redirect(new URL("/produits", request.url));
+    }
     return NextResponse.next();
   } catch {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -40,6 +42,6 @@ export const config = {
     "/panier/:path*",
     "/commande/:path*",
     "/confirmation/:path*",
-    "/mes-commandes/:path*",
+    "/mes-commande/:path*",
   ],
 };

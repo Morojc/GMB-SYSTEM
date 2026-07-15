@@ -1,21 +1,22 @@
-import Sidebar from "@/components/sidebar";
-import Navbar from "@/components/navbar";
+import { redirect } from "next/navigation";
+import { getCurrentUser, isStaff } from "@/lib/auth";
+import Sidebar from "@/components/admin/Sidebar";
+import Topbar from "@/components/admin/Topbar";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getCurrentUser();
+  if (!user || !isStaff(user.role)) redirect("/login");
+
   return (
-    <div className="flex">
-      <Sidebar />
-
-      <div className="flex-1 min-h-screen bg-gray-100">
-        <Navbar />
-
-        <main className="p-6">
-          {children}
-        </main>
+    <div className="flex min-h-screen bg-grain">
+      <Sidebar role={user.role} />
+      <div className="flex min-h-screen flex-1 flex-col">
+        <Topbar user={user} />
+        <main className="flex-1 p-8">{children}</main>
       </div>
     </div>
   );

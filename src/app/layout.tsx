@@ -4,8 +4,8 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 
 export const metadata: Metadata = {
-  title: "GBM",
-  description: "Gestion des produits alimentaires",
+  title: "GMB — Grande Minoterie",
+  description: "Système de gestion pour minoterie et distribution alimentaire",
 };
 
 export default function RootLayout({

@@ -2,9 +2,12 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
+export type Role = "ADMIN" | "EMPLOYE" | "CLIENT";
+
 export interface JwtPayload {
   idPersonne: number;
   email: string;
+  role: Role;
 }
 
 export function generateToken(payload: JwtPayload) {

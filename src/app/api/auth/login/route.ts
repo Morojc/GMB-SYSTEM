@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { generateToken } from "@/lib/jwt";
+import { resolveRole } from "@/lib/roles";
 
 export async function POST(req: Request) {
   try {
@@ -15,52 +16,44 @@ export async function POST(req: Request) {
     }
 
     const personne = await prisma.personne.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
       include: {
         client: true,
-        employe: true,
+        employe: { include: { role_employe: true } },
       },
     });
 
-    if (!personne) {
+    if (!personne || !personne.password) {
       return NextResponse.json(
-        { message: "Utilisateur introuvable." },
-        { status: 404 }
-      );
-    }
-
-    const passwordCorrect = await bcrypt.compare(
-      password,
-      password
-    );
-
-    if (!passwordCorrect) {
-      return NextResponse.json(
-        { message: "Mot de passe incorrect." },
+        { message: "Identifiants incorrects." },
         { status: 401 }
       );
     }
 
+    const passwordCorrect = await bcrypt.compare(password, personne.password);
+
+    if (!passwordCorrect) {
+      return NextResponse.json(
+        { message: "Identifiants incorrects." },
+        { status: 401 }
+      );
+    }
+
+    const role = resolveRole(personne);
     const token = generateToken({
       idPersonne: personne.id_personne,
-      email: email,
+      email,
+      role,
     });
 
     const response = NextResponse.json({
       message: "Connexion réussie.",
-      token,
       user: {
         id: personne.id_personne,
         nom: personne.nom,
         prenom: personne.prenom,
-        email: personne.email,
-        role: personne.employe
-          ? "EMPLOYE"
-          : personne.client
-          ? "CLIENT"
-          : "UNKNOWN",
+        email,
+        role,
       },
     });
 
@@ -75,10 +68,6 @@ export async function POST(req: Request) {
     return response;
   } catch (error) {
     console.error(error);
-
-    return NextResponse.json(
-      { message: "Erreur serveur." },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Erreur serveur." }, { status: 500 });
   }
 }

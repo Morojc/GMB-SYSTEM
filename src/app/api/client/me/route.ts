@@ -1,38 +1,10 @@
 import { NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
+import { getCurrentUser } from "@/lib/auth";
 
-export async function GET(request: Request) {
-  const cookieHeader = request.headers.get("cookie");
-
-  if (!cookieHeader) {
-    return NextResponse.json(
-      { authenticated: false },
-      { status: 401 }
-    );
+export async function GET() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ authenticated: false }, { status: 401 });
   }
-
-  const token = cookieHeader
-    .split("; ")
-    .find((c) => c.startsWith("client_token="))
-    ?.split("=")[1];
-
-  if (!token) {
-    return NextResponse.json(
-      { authenticated: false },
-      { status: 401 }
-    );
-  }
-
-  try {
-    verifyToken(token);
-
-    return NextResponse.json({
-      authenticated: true,
-    });
-  } catch {
-    return NextResponse.json(
-      { authenticated: false },
-      { status: 401 }
-    );
-  }
+  return NextResponse.json({ authenticated: true, role: user.role });
 }

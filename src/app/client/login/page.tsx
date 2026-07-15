@@ -13,7 +13,7 @@ export default function ClientLoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const response = await fetch("/api/client/login", {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,9 +31,9 @@ export default function ClientLoginPage() {
       return;
     }
 
-    alert("Connexion réussie.");
-
-    router.push("/commande");
+    const role = data.user?.role;
+    router.push(role === "ADMIN" || role === "EMPLOYE" ? "/dashboard" : "/panier");
+    router.refresh();
   }
 
   return (
