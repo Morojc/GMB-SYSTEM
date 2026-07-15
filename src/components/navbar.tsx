@@ -37,7 +37,7 @@ export default function Navbar() {
           href="/"
           className="text-3xl font-bold text-green-700"
         >
-          GBM
+          GMB
         </Link>
 
         {/* Menu */}
