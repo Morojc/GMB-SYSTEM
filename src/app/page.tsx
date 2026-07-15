@@ -81,7 +81,7 @@ export default function HomePage() {
 
         <div>
           <img
-            src="https://images.unsplash.com/photo-1542838132-92c53300491e"
+            src="https://zinecapitalinvest.ma/lgmz.php"
             alt="Produits alimentaires"
             className="rounded-3xl shadow-xl w-full h-[450px] object-cover"
           />
