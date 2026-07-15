@@ -25,6 +25,27 @@ export default function Sidebar({ role }: { role: Role }) {
           label="Vue d'ensemble"
           active={pathname === "/dashboard"}
         />
+
+        <div>
+          <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-grain/40">
+            Opérations
+          </p>
+          <div className="space-y-0.5">
+            <NavItem
+              href="/dashboard/reception"
+              icon="📥"
+              label="Réception achats"
+              active={pathname.startsWith("/dashboard/reception")}
+            />
+            <NavItem
+              href="/dashboard/production"
+              icon="🏭"
+              label="Lancer production"
+              active={pathname.startsWith("/dashboard/production")}
+            />
+          </div>
+        </div>
+
         {groups.map((g) => {
           const items = g.items.filter((r) => !r.adminOnly || role === "ADMIN");
           if (!items.length) return null;
