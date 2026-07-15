@@ -6,6 +6,16 @@ import { employe } from "./employe";
 import { commande } from "./commande";
 import { stock } from "./stock";
 import { zoneStock } from "./zone_stock";
+import {
+  ligneCommande,
+  facture,
+  bonCommande,
+  livreur,
+  livraison,
+  bonLivraison,
+} from "./commercial";
+import { silon, matierePremiere, catalogue, catalogueProduit } from "./production";
+import { personne, roleEmploye, salaire } from "./rh";
 
 /**
  * Central registry of every CRUD resource. Order here defines the order
@@ -15,14 +25,28 @@ const REGISTRY: ResourceConfig[] = [
   // Commercial
   client,
   commande,
+  ligneCommande,
+  facture,
+  bonCommande,
+  livraison,
+  bonLivraison,
+  livreur,
   // Production
   produit,
   typeProduit,
+  catalogue,
+  catalogueProduit,
+  silon,
+  matierePremiere,
   // Inventaire
   stock,
   zoneStock,
   // RH
   employe,
+  roleEmploye,
+  salaire,
+  // Système
+  personne,
 ];
 
 export function allResources(): ResourceConfig[] {
