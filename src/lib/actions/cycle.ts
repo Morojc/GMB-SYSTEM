@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
+import { lignesTotal, rendement, sumQuantite } from "@/lib/cycle-calc";
 import { revalidatePath } from "next/cache";
 
 export interface CycleResult {
@@ -28,10 +29,7 @@ export async function receptionAchat(idAchat: number): Promise<CycleResult> {
     if (achat.statut === "Reçu")
       return { ok: false, error: "Cet achat est déjà réceptionné." };
 
-    const montant = achat.ligne_achat.reduce(
-      (sum, l) => sum + (l.quantite ?? 0) * Number(l.prix_unitaire ?? 0),
-      0
-    );
+    const montant = lignesTotal(achat.ligne_achat);
 
     await prisma.$transaction(async (tx) => {
       for (const l of achat.ligne_achat) {
@@ -123,15 +121,13 @@ export async function createFabrication(input: FabricationInput): Promise<CycleR
       return f;
     });
 
-    const totalIn = intrants.reduce((s, i) => s + i.quantite, 0);
-    const totalOut = produits.reduce((s, p) => s + p.quantite, 0);
-    const rendement = totalIn > 0 ? Math.round((totalOut / totalIn) * 1000) / 10 : 0;
+    const rdt = rendement(sumQuantite(intrants), sumQuantite(produits));
 
     revalidatePath("/dashboard/production");
     revalidatePath("/dashboard/fabrications");
     revalidatePath("/dashboard/produits");
     revalidatePath("/dashboard/matieres");
-    return { ok: true, id: fab.id_fabrication, rendement };
+    return { ok: true, id: fab.id_fabrication, rendement: rdt };
   } catch (e) {
     return { ok: false, error: (e as Error).message };
   }

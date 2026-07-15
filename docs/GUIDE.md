@@ -264,9 +264,22 @@ run, **decrements `matiere_premiere`** for each input and **increments
 `produit.quantite_stock`** for each output, and reports the **rendement** (yield %
 = output ÷ input). Both actions are ADMIN-guarded.
 
+### C. Traitement d'une commande — `/dashboard/ventes`
+Closes the sales leg. `validerCommande(idCommande)` checks finished-product stock,
+then in one transaction **decrements `produit.quantite_stock`**, sets the order
+`Validée`, and issues the **sales invoice** (`facture`). `livrerCommande(idCommande)`
+(only after validation) creates a **`livraison` + `bon_livraison`** and sets the
+order `Livrée`. Both are ADMIN-guarded. Actions live in `src/lib/actions/sales.ts`.
+
+Clients see their own orders (real data) at `/mes-commande`.
+
 ### Finance
 The overview shows total **ventes** (Σ `facture.montant`) vs total **achats**
 (Σ `facture_achat.montant`) and the resulting **marge brute**.
+
+### Shared cycle math
+Pure, unit-tested helpers in `src/lib/cycle-calc.ts` (`lignesTotal`, `rendement`,
+`sumQuantite`) are reused by all three workflows and the overview.
 
 > These two pages live at static segments (`/dashboard/reception`,
 > `/dashboard/production`) that intentionally do **not** collide with the generic

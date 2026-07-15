@@ -43,6 +43,12 @@ export default function Sidebar({ role }: { role: Role }) {
               label="Lancer production"
               active={pathname.startsWith("/dashboard/production")}
             />
+            <NavItem
+              href="/dashboard/ventes"
+              icon="🧾"
+              label="Traitement commandes"
+              active={pathname.startsWith("/dashboard/ventes")}
+            />
           </div>
         </div>
 
