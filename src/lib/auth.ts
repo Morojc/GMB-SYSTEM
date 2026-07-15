@@ -25,3 +25,8 @@ export async function requireRole(roles: Role[]): Promise<JwtPayload> {
 export function isStaff(role: Role | undefined): boolean {
   return role === "ADMIN" || role === "EMPLOYE";
 }
+
+/** True for administrators — the dashboard is admin-only. */
+export function isAdmin(role: Role | undefined): boolean {
+  return role === "ADMIN";
+}

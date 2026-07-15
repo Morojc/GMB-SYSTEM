@@ -7,7 +7,7 @@ export const zoneStock: ResourceConfig = {
   labelSingular: "Zone de stockage",
   labelPlural: "Zones de stockage",
   icon: "🗺️",
-  group: "Inventaire",
+  group: "Stock",
   fields: [
     { name: "id_zone", label: "ID", type: "number", inList: true, inForm: false },
     { name: "nom", label: "Nom", type: "text", inList: true, inForm: true, required: true },

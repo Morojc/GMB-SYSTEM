@@ -7,7 +7,7 @@ export const stock: ResourceConfig = {
   labelSingular: "Entrée de stock",
   labelPlural: "Stock",
   icon: "📊",
-  group: "Inventaire",
+  group: "Stock",
   fields: [
     { name: "id_stock", label: "ID", type: "number", inList: true, inForm: false },
     {

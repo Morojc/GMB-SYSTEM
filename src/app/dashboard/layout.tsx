@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser, isStaff } from "@/lib/auth";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 import Sidebar from "@/components/admin/Sidebar";
 import Topbar from "@/components/admin/Topbar";
 
@@ -9,7 +9,8 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const user = await getCurrentUser();
-  if (!user || !isStaff(user.role)) redirect("/login");
+  if (!user) redirect("/login");
+  if (!isAdmin(user.role)) redirect("/produits");
 
   return (
     <div className="flex min-h-screen bg-grain">

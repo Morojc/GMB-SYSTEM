@@ -102,11 +102,13 @@ model livreur {
 }
 
 model matiere_premiere {
-  id_matiere Int     @id @default(autoincrement())
-  nom        String? @db.VarChar(100)
-  quantite   Int?
-  id_silon   Int?
-  silon      silon?  @relation(fields: [id_silon], references: [id_silon], onDelete: NoAction, onUpdate: NoAction)
+  id_matiere          Int                   @id @default(autoincrement())
+  nom                 String?               @db.VarChar(100)
+  quantite            Int?
+  id_silon            Int?
+  silon               silon?                @relation(fields: [id_silon], references: [id_silon], onDelete: NoAction, onUpdate: NoAction)
+  ligne_achat         ligne_achat[]
+  fabrication_intrant fabrication_intrant[]
 }
 
 model personne {
@@ -127,10 +129,11 @@ model produit {
   prix              Decimal?            @db.Decimal(10, 2)
   quantite_stock    Int?
   id_type           Int?
-  catalogue_produit catalogue_produit[]
-  ligne_commande    ligne_commande[]
-  type_produit      type_produit?       @relation(fields: [id_type], references: [id_type], onDelete: NoAction, onUpdate: NoAction)
-  stock             stock[]
+  catalogue_produit   catalogue_produit[]
+  ligne_commande      ligne_commande[]
+  type_produit        type_produit?         @relation(fields: [id_type], references: [id_type], onDelete: NoAction, onUpdate: NoAction)
+  stock               stock[]
+  fabrication_produit fabrication_produit[]
 }
 
 model role_employe {
@@ -175,4 +178,72 @@ model zone_stock {
   nom      String? @db.VarChar(100)
   capacite Int?
   stock    stock[]
+}
+
+// ─── Approvisionnement (procurement: buying wheat / raw material) ───────────
+
+model fournisseur {
+  id_fournisseur Int      @id @default(autoincrement())
+  nom            String   @db.VarChar(150)
+  telephone      String?  @db.VarChar(20)
+  email          String?  @db.VarChar(150)
+  adresse        String?
+  achat          achat[]
+}
+
+model achat {
+  id_achat       Int             @id @default(autoincrement())
+  id_fournisseur Int?
+  date_achat     DateTime?       @db.Date
+  statut         String?         @db.VarChar(50) // Commandé | Reçu | Annulé
+  fournisseur    fournisseur?    @relation(fields: [id_fournisseur], references: [id_fournisseur], onDelete: NoAction, onUpdate: NoAction)
+  ligne_achat    ligne_achat[]
+  facture_achat  facture_achat[]
+}
+
+model ligne_achat {
+  id_ligne_achat   Int               @id @default(autoincrement())
+  id_achat         Int?
+  id_matiere       Int?
+  quantite         Int?
+  prix_unitaire    Decimal?          @db.Decimal(10, 2)
+  achat            achat?            @relation(fields: [id_achat], references: [id_achat], onDelete: NoAction, onUpdate: NoAction)
+  matiere_premiere matiere_premiere? @relation(fields: [id_matiere], references: [id_matiere], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model facture_achat {
+  id_facture_achat Int       @id @default(autoincrement())
+  id_achat         Int?
+  date_facture     DateTime? @db.Date
+  montant          Decimal?  @db.Decimal(10, 2)
+  achat            achat?    @relation(fields: [id_achat], references: [id_achat], onDelete: NoAction, onUpdate: NoAction)
+}
+
+// ─── Production (milling wheat into finished products) ──────────────────────
+
+model fabrication {
+  id_fabrication      Int                   @id @default(autoincrement())
+  date_fabrication    DateTime?             @db.Date
+  statut              String?               @db.VarChar(50) // En cours | Terminée | Annulée
+  note                String?
+  fabrication_intrant fabrication_intrant[]
+  fabrication_produit fabrication_produit[]
+}
+
+model fabrication_intrant {
+  id_intrant       Int               @id @default(autoincrement())
+  id_fabrication   Int?
+  id_matiere       Int?
+  quantite         Int?
+  fabrication      fabrication?      @relation(fields: [id_fabrication], references: [id_fabrication], onDelete: NoAction, onUpdate: NoAction)
+  matiere_premiere matiere_premiere? @relation(fields: [id_matiere], references: [id_matiere], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model fabrication_produit {
+  id_fab_produit Int          @id @default(autoincrement())
+  id_fabrication Int?
+  id_produit     Int?
+  quantite       Int?
+  fabrication    fabrication? @relation(fields: [id_fabrication], references: [id_fabrication], onDelete: NoAction, onUpdate: NoAction)
+  produit        produit?     @relation(fields: [id_produit], references: [id_produit], onDelete: NoAction, onUpdate: NoAction)
 }

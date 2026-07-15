@@ -115,10 +115,68 @@ async function main() {
     () => prisma.zone_stock.findFirst({ where: { nom: "Entrepôt A" } }),
     () => prisma.zone_stock.create({ data: { nom: "Entrepôt A", capacite: 1000 } })
   );
-  await ensure(
+  const silo = await ensure(
     () => prisma.silon.findFirst({ where: { nom: "Silo 1" } }),
     () => prisma.silon.create({ data: { nom: "Silo 1", capacite: 5000 } })
   );
+
+  // ---- Raw material (wheat) in the silo ----------------------------------
+  const ble = await ensure(
+    () => prisma.matiere_premiere.findFirst({ where: { nom: "Blé tendre" } }),
+    () =>
+      prisma.matiere_premiere.create({
+        data: { nom: "Blé tendre", quantite: 8000, id_silon: silo.id_silon },
+      })
+  );
+
+  // ---- Procurement: a supplier + a purchase order (Commandé) --------------
+  const coop = await ensure(
+    () => prisma.fournisseur.findFirst({ where: { nom: "Coopérative Blé du Saïss" } }),
+    () =>
+      prisma.fournisseur.create({
+        data: {
+          nom: "Coopérative Blé du Saïss",
+          telephone: "0655555555",
+          email: "contact@ble-saiss.ma",
+          adresse: "Meknès",
+        },
+      })
+  );
+  const nbAchats = await prisma.achat.count();
+  if (nbAchats === 0) {
+    const cmdAchat = await prisma.achat.create({
+      data: {
+        id_fournisseur: coop.id_fournisseur,
+        date_achat: new Date(),
+        statut: "Commandé",
+      },
+    });
+    await prisma.ligne_achat.create({
+      data: {
+        id_achat: cmdAchat.id_achat,
+        id_matiere: ble.id_matiere,
+        quantite: 2000,
+        prix_unitaire: 4.5,
+      },
+    });
+  }
+
+  // ---- Production: one finished fabrication run --------------------------
+  const nbFab = await prisma.fabrication.count();
+  if (nbFab === 0) {
+    const farine = await prisma.produit.findFirst({ where: { nom: { contains: "T55" } } });
+    const fab = await prisma.fabrication.create({
+      data: { date_fabrication: new Date(), statut: "Terminée", note: "Lot de démonstration" },
+    });
+    await prisma.fabrication_intrant.create({
+      data: { id_fabrication: fab.id_fabrication, id_matiere: ble.id_matiere, quantite: 1000 },
+    });
+    if (farine) {
+      await prisma.fabrication_produit.create({
+        data: { id_fabrication: fab.id_fabrication, id_produit: farine.id_produit, quantite: 780 },
+      });
+    }
+  }
 
   // ---- Sample clients -----------------------------------------------------
   const clientPersonnes = [

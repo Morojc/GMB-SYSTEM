@@ -7,7 +7,7 @@ export const ligneCommande: ResourceConfig = {
   labelSingular: "Ligne de commande",
   labelPlural: "Lignes de commande",
   icon: "➕",
-  group: "Commercial",
+  group: "Ventes",
   fields: [
     { name: "id_ligne", label: "ID", type: "number", inList: true, inForm: false },
     {
@@ -46,10 +46,10 @@ export const facture: ResourceConfig = {
   key: "factures",
   model: "facture",
   idField: "id_facture",
-  labelSingular: "Facture",
-  labelPlural: "Factures",
+  labelSingular: "Facture de vente",
+  labelPlural: "Factures de vente",
   icon: "🧮",
-  group: "Commercial",
+  group: "Ventes",
   fields: [
     { name: "id_facture", label: "ID", type: "number", inList: true, inForm: false },
     { name: "date_facture", label: "Date", type: "date", inList: true, inForm: true },
@@ -78,7 +78,7 @@ export const bonCommande: ResourceConfig = {
   labelSingular: "Bon de commande",
   labelPlural: "Bons de commande",
   icon: "📄",
-  group: "Commercial",
+  group: "Ventes",
   fields: [
     { name: "id_bon", label: "ID", type: "number", inList: true, inForm: false },
     { name: "date_creation", label: "Date de création", type: "date", inList: true, inForm: true },
@@ -106,7 +106,7 @@ export const livreur: ResourceConfig = {
   labelSingular: "Livreur",
   labelPlural: "Livreurs",
   icon: "🚚",
-  group: "Commercial",
+  group: "Ventes",
   fields: [
     { name: "id_livreur", label: "ID", type: "number", inList: true, inForm: false },
     { name: "nom", label: "Nom", type: "text", inList: true, inForm: true, required: true },
@@ -122,7 +122,7 @@ export const livraison: ResourceConfig = {
   labelSingular: "Livraison",
   labelPlural: "Livraisons",
   icon: "📦",
-  group: "Commercial",
+  group: "Ventes",
   fields: [
     { name: "id_livraison", label: "ID", type: "number", inList: true, inForm: false },
     { name: "date_livraison", label: "Date", type: "date", inList: true, inForm: true },
@@ -171,7 +171,7 @@ export const bonLivraison: ResourceConfig = {
   labelSingular: "Bon de livraison",
   labelPlural: "Bons de livraison",
   icon: "📝",
-  group: "Commercial",
+  group: "Ventes",
   fields: [
     { name: "id_bon", label: "ID", type: "number", inList: true, inForm: false },
     { name: "date_creation", label: "Date de création", type: "date", inList: true, inForm: true },

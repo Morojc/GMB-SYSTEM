@@ -7,7 +7,7 @@ export const client: ResourceConfig = {
   labelSingular: "Client",
   labelPlural: "Clients",
   icon: "👤",
-  group: "Commercial",
+  group: "Ventes",
   fields: [
     { name: "id_client", label: "ID", type: "number", inList: true, inForm: false },
     {

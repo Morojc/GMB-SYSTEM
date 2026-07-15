@@ -10,9 +10,10 @@ export type FieldType =
   | "badge";
 
 export type ResourceGroup =
-  | "Commercial"
+  | "Approvisionnement"
   | "Production"
-  | "Inventaire"
+  | "Stock"
+  | "Ventes"
   | "RH"
   | "Système";
 

@@ -16,13 +16,34 @@ import {
 } from "./commercial";
 import { silon, matierePremiere, catalogue, catalogueProduit } from "./production";
 import { personne, roleEmploye, salaire } from "./rh";
+import { fournisseur, achat, ligneAchat, factureAchat } from "./approvisionnement";
+import { fabrication, fabricationIntrant, fabricationProduit } from "./fabrication";
 
 /**
  * Central registry of every CRUD resource. Order here defines the order
- * within each sidebar group.
+ * within each sidebar group, and follows the mill cycle:
+ * Approvisionnement → Production → Stock → Ventes → RH → Système.
  */
 const REGISTRY: ResourceConfig[] = [
-  // Commercial
+  // Approvisionnement (buy wheat / raw material)
+  fournisseur,
+  achat,
+  ligneAchat,
+  factureAchat,
+  // Production (mill wheat into finished products)
+  fabrication,
+  fabricationIntrant,
+  fabricationProduit,
+  produit,
+  typeProduit,
+  matierePremiere,
+  silon,
+  catalogue,
+  catalogueProduit,
+  // Stock (finished goods)
+  stock,
+  zoneStock,
+  // Ventes (sell & bill clients)
   client,
   commande,
   ligneCommande,
@@ -31,16 +52,6 @@ const REGISTRY: ResourceConfig[] = [
   livraison,
   bonLivraison,
   livreur,
-  // Production
-  produit,
-  typeProduit,
-  catalogue,
-  catalogueProduit,
-  silon,
-  matierePremiere,
-  // Inventaire
-  stock,
-  zoneStock,
   // RH
   employe,
   roleEmploye,
@@ -60,9 +71,10 @@ export function getResource(key: string): ResourceConfig {
 }
 
 const GROUP_ORDER: ResourceGroup[] = [
-  "Commercial",
+  "Approvisionnement",
   "Production",
-  "Inventaire",
+  "Stock",
+  "Ventes",
   "RH",
   "Système",
 ];

@@ -7,7 +7,7 @@ export const commande: ResourceConfig = {
   labelSingular: "Commande",
   labelPlural: "Commandes",
   icon: "🧾",
-  group: "Commercial",
+  group: "Ventes",
   fields: [
     { name: "id_commande", label: "ID", type: "number", inList: true, inForm: false },
     {
