@@ -41,7 +41,7 @@ export default function AproposPage() {
             <p className="text-gray-600 leading-8 mb-6">
               GBM est une entreprise spécialisée dans la production et la
               commercialisation de produits alimentaires de haute qualité.
-              Notre objectif est d'offrir des produits répondant aux normes
+              Notre objectif est d&apos;offrir des produits répondant aux normes
               les plus exigeantes.
             </p>
 

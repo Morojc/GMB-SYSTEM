@@ -42,7 +42,7 @@ export default async function DashboardPage() {
         {/* Chiffre d'affaires + commandes par statut */}
         <div className="rounded-lg border border-line bg-surface p-6 shadow-sm">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-roast-soft">
-            Chiffre d'affaires facturé
+            Chiffre d&apos;affaires facturé
           </h2>
           <p className="mt-2 text-4xl font-bold text-wheat">
             {ca.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} MAD

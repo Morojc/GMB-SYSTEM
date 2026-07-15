@@ -87,7 +87,7 @@ export default function LoginPage() {
         <p className="mt-6 text-center text-sm text-roast-soft">
           Client sans compte ?{" "}
           <Link href="/client/inscription" className="font-semibold text-wheat hover:underline">
-            S'inscrire
+            S&apos;inscrire
           </Link>
         </p>
       </form>

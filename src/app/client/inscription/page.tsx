@@ -129,7 +129,7 @@ export default function InscriptionClientPage() {
             type="submit"
             className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition"
           >
-            S'inscrire
+            S&apos;inscrire
           </button>
 
         </form>

@@ -32,7 +32,7 @@ export default function ConfirmationPage() {
             href="/"
             className="block border border-green-600 text-green-600 hover:bg-green-600 hover:text-white py-3 rounded-lg transition"
           >
-            Retour à l'accueil
+            Retour à l&apos;accueil
           </Link>
 
         </div>

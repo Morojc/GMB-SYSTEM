@@ -97,7 +97,7 @@ export default function MesCommandesPage() {
             href="/"
             className="border border-green-600 text-green-600 hover:bg-green-600 hover:text-white px-6 py-3 rounded-lg"
           >
-            Retour à l'accueil
+            Retour à l&apos;accueil
           </Link>
 
           <Link

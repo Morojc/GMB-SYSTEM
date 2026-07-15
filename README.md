@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GMB — Grande Minoterie Management System
 
-## Getting Started
+A management system for a flour-mill / food-distribution business, built with
+**Next.js 16** (App Router), **Prisma 6 + PostgreSQL**, **Tailwind CSS v4**,
+JWT authentication and a config-driven admin dashboard.
 
-First, run the development server:
+It provides:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- A **role-based authentication** system (ADMIN / EMPLOYE / CLIENT) with a single JWT cookie.
+- An **admin dashboard** with full **CRUD** over every entity in the database, generated
+  from small per-entity config files (add a screen by adding one config).
+- A **public storefront** (product catalog, cart, checkout) for clients.
+- An **industrial / wheat-toned** design system.
+
+> 📖 Architecture, the resource framework, the auth flow and the
+> **"add a resource in 3 steps"** recipe live in [`docs/GUIDE.md`](docs/GUIDE.md).
+
+---
+
+## Prerequisites
+
+- **Node.js** 20+
+- **PostgreSQL** 13+ running locally (or a reachable connection string)
+
+## Setup
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment** — copy `.env.example` to `.env` and fill in:
+
+   ```env
+   DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/gbm?schema=public"
+   JWT_SECRET="a-long-random-secret-at-least-32-chars"
+   ```
+
+   > The `DATABASE_URL` must point at a database that exists and is reachable.
+   > `JWT_SECRET` signs and verifies auth tokens — required, no default.
+
+3. **Create the schema** (first run):
+
+   ```bash
+   npx prisma migrate dev --name init   # or: npx prisma db push
+   ```
+
+4. **Generate the Prisma client** (run again whenever `schema.prisma` changes):
+
+   ```bash
+   npx prisma generate
+   ```
+
+5. **Seed sample data + the admin account** (additive & idempotent — never deletes rows):
+
+   ```bash
+   npm run seed
+   ```
+
+6. **Run the dev server**
+
+   ```bash
+   npm run dev
+   ```
+
+   Open <http://localhost:3000>.
+
+## Seeded accounts
+
+The seed creates these logins (change them before any real deployment):
+
+| Role     | Email               | Password      | Lands on     |
+| -------- | ------------------- | ------------- | ------------ |
+| ADMIN    | `admin@gmb.local`   | `Admin123!`   | `/dashboard` |
+| EMPLOYE  | `meunier@gmb.local` | `Meunier123!` | `/dashboard` |
+| CLIENT   | `sara.alaoui@example.com` | `Client123!` | `/produits`  |
+
+Log in at **`/login`**. Clients can self-register at **`/client/inscription`**.
+
+## Scripts
+
+| Command          | Description                                   |
+| ---------------- | --------------------------------------------- |
+| `npm run dev`    | Start the dev server                          |
+| `npm run build`  | Production build                              |
+| `npm start`      | Run the production build                      |
+| `npm run seed`   | Seed roles, admin account and sample data     |
+| `npm run test`   | Run unit tests (Vitest)                        |
+| `npm run lint`   | Lint                                          |
+
+## Project layout (high level)
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+prisma/
+  schema.prisma          # data model (French domain, snake_case)
+  seed.ts                # additive seed
+src/
+  app/
+    login/               # staff + client login
+    client/              # client signup / login
+    produits/            # public storefront
+    panier/ commande/    # cart + checkout
+    dashboard/           # admin — generic [resource] routes + overview
+    api/auth/            # login / logout
+  components/admin/       # DataTable, ResourceForm, Sidebar, Topbar, …
+  lib/
+    auth.ts jwt.ts roles.ts   # authentication
+    resources/           # one config per entity + registry
+    actions/crud.ts      # generic create/update/delete server actions
+    format.ts loadOptions.ts
+  proxy.ts               # route guard (Next 16 "proxy", formerly middleware)
+docs/
+  GUIDE.md               # architecture & how-to
+  superpowers/           # design spec + implementation plan
+```

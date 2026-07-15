@@ -84,7 +84,7 @@ export default function ClientLoginPage() {
             href="/client/inscription"
             className="text-green-600 font-semibold ml-2 hover:underline"
           >
-            S'inscrire
+            S&apos;inscrire
           </Link>
         </p>
 
