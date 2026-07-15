@@ -2,6 +2,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/navbar";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProduitsPage() {
   const produits = await prisma.produit.findMany({
     include: {

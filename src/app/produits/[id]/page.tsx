@@ -4,6 +4,7 @@ import Link from "next/link";
 import AddToCartButton from "@/components/AddToCartButton";
 import Navbar from "@/components/navbar";
 
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{
